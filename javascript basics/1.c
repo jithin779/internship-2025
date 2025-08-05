@@ -1,65 +1,84 @@
 #include<stdio.h>
+int front=-1,rear=-1,choice,size,item,q[10],i;
+void Enqueue();
+void Dequeue();
+void Display();
 int main()
 {
-int row,cols,i,j,k,a[10][10],spmatrix[10][3],transmatrix[10][3];
-printf("enter the row size and columns size");
-scanf("%d%d",&row,&cols);
-printf("enter the values of sparse matrix:");
-for(i=0;i<row;i++){
-for(j=0;j<cols;j++){
-scanf("%d",&a[i][j]);
+
+printf("enter the size of the queue");
+scanf("%d",&size);
+do{
+printf("enter the your choice:\n");
+printf("\n1.ENQUEUE\t2.DEQUEUE\t 3.DISPLAY\t 4.EXIT\n");
+scanf("%d",&choice);
+switch(choice)
+{
+case 1:Enqueue();
+break;
+case 2:Dequeue();
+break;
+case 3:Display();
+break;
+case 4:printf("Exit");
+return 0;
+default:printf("Invalid Choice\n");
 }
+}while(choice!=4);
 }
-printf("THE SPARSE MATRIX IS:\n");
-for(i=0;i<row;i++){
-for(j=0;j<cols;j++){
-printf("%d\t",a[i][j]);
+
+void Enqueue()
+{
+if(rear==size-1){
+printf("queue is full\n");
 }
-printf("\n");
+else if(front==-1&&rear==-1){
+front=rear=0;
+printf("ENTER THE ELEMENT : ");
+scanf("%d",&item);
+q[rear]=item;
 }
-k=1;
-for(i=0;i<row;i++){
-for(j=0;j<cols;j++){
-if(a[i][j]!=0){
-spmatrix[k][0]=i;
-spmatrix[k][1]=j;
-spmatrix[k][2]=a[i][j];
-k=k+1;
+else{
+printf("ENTER THE ELEMENT : ");
+scanf("%d",&item);
+rear=rear+1;
+q[rear]=item;
+}printf("\n");
 }
+
+void Dequeue()
+{
+if(front==-1&&rear==-1){
+printf("queue is empty");
 }
+else if(front=rear){
+printf("deleted item is :%d\t",q[front]);
 }
-printf("TUPLE FORMAT IS : \n");
-spmatrix[0][0]=row;
-spmatrix[0][1]=cols;
-spmatrix[0][2]=k-1;
-for(i=0;i<=spmatrix[0][2];i++){
-for(j=0;j<3;j++){
-printf("%d\t",spmatrix[i][j]);
+else{
+printf("deleted item is :%d\t",q[front]);
+front=front+1;
+}printf("\n\n");
 }
-printf("\n");
+
+void Display()
+{
+if(front==-1&&rear==-1){
+printf("queue is empty");
 }
-transmatrix[0][0]=spmatrix[0][1];
-transmatrix[0][1]=spmatrix[0][0];
-transmatrix[0][2]=spmatrix[0][2];
-k=1;
-for(i=0;i<=spmatrix[0][1];i++){
-for(j=1;j<=spmatrix[0][2];j++){
-if(spmatrix[j][1]==i){
-transmatrix[k][0]=spmatrix[j][1];
-transmatrix[k][1]=spmatrix[j][0];
-transmatrix[k][2]=spmatrix[j][2];
-k=k+1;
+else{
+for(i=front;i<=rear;i++){
+printf("%d\t",q[i]);
 }
+}printf("\n\n");
 }
-}
-printf("THE TRANSPOSE MATRIX IS:\n");
-for(i=0;i<=transmatrix[0][2];i++){
-for(j=0;j<3;j++){
-printf("%d\t",transmatrix[i][j]);
-}
-printf("\n");
-}
-}
+
+
+
+
+
+
+
+
 
 
 
