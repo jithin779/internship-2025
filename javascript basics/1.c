@@ -1,3 +1,5 @@
+#include<stdio.h>
+#include<string.h>
 #include<math.h>
 #include<ctype.h>
 #include<stdlib.h>
@@ -155,6 +157,8 @@ return;
 }
 printf("result=%d\n",stack[evalTop]);
 }				
+		
+						
 
 output
 ----MENU----
