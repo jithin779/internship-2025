@@ -153,3 +153,11 @@ int main()
     
     return 0;
 }
+
+
+//output
+Polynomial 1 : 3x^3 + 2x^2 + 1x^0
+Polynomial 2 : 4x^2 + 2x^1 + 5x^0
+Sum : 3x^3 + 6x^2 + 2x^1 + 6x^0
+Product : 12x^5 + 14x^4 + 19x^3 + 14x^2 + 2x^1 + 5x^0
+
