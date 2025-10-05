@@ -1,0 +1,302 @@
+import java.util.*;
+
+// Movie class to represent a movie
+class Movie {
+    private int id;
+    private String title;
+    private String genre;
+    private int duration; // in minutes
+    private int totalSeats;
+    private int availableSeats;
+
+    public Movie(int id, String title, String genre, int duration, int totalSeats) {
+        this.id = id;
+        this.title = title;
+        this.genre = genre;
+        this.duration = duration;
+        this.totalSeats = totalSeats;
+        this.availableSeats = totalSeats;
+    }
+
+    // Getters
+    public int getId() { return id; }
+    public String getTitle() { return title; }
+    public String getGenre() { return genre; }
+    public int getDuration() { return duration; }
+    public int getTotalSeats() { return totalSeats; }
+    public int getAvailableSeats() { return availableSeats; }
+
+    // Setter for available seats (for updates)
+    public void setAvailableSeats(int seats) { this.availableSeats = seats; }
+
+    @Override
+    public String toString() {
+        return "Movie ID: " + id + ", Title: " + title + ", Genre: " + genre +
+               ", Duration: " + duration + " mins, Available Seats: " + availableSeats;
+    }
+}
+
+// Booking class to represent a booking
+class Booking {
+    private int id;
+    private int movieId;
+    private String userName;
+    private int seatsBooked;
+    private String bookingDate; // Simple date as string
+
+    public Booking(int id, int movieId, String userName, int seatsBooked, String bookingDate) {
+        this.id = id;
+        this.movieId = movieId;
+        this.userName = userName;
+        this.seatsBooked = seatsBooked;
+        this.bookingDate = bookingDate;
+    }
+
+    // Getters
+    public int getId() { return id; }
+    public int getMovieId() { return movieId; }
+    public String getUser Name() { return userName; }
+    public int getSeatsBooked() { return seatsBooked; }
+    public String getBookingDate() { return bookingDate; }
+
+    @Override
+    public String toString() {
+        return "Booking ID: " + id + ", Movie ID: " + movieId + ", User: " + userName +
+               ", Seats: " + seatsBooked + ", Date: " + bookingDate;
+    }
+}
+
+// Main class for the online movie booking system
+public class MovieBookingSystem {
+    private static List<Movie> movies = new ArrayList<>();
+    private static List<Booking> bookings = new ArrayList<>();
+    private static int nextMovieId = 1;
+    private static int nextBookingId = 1;
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        System.out.println("Welcome to Online Movie Booking System");
+        showMenu();
+    }
+
+    private static void showMenu() {
+        while (true) {
+            System.out.println("\n--- Menu ---");
+            System.out.println("1. Add Movie (Create)");
+            System.out.println("2. View All Movies (Read)");
+            System.out.println("3. Update Movie Seats");
+            System.out.println("4. Delete Movie");
+            System.out.println("5. Book a Movie (Create Booking)");
+            System.out.println("6. View All Bookings (Read)");
+            System.out.println("7. Cancel Booking (Delete)");
+            System.out.println("8. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    addMovie();
+                    break;
+                case 2:
+                    viewMovies();
+                    break;
+                case 3:
+                    updateMovie();
+                    break;
+                case 4:
+                    deleteMovie();
+                    break;
+                case 5:
+                    bookMovie();
+                    break;
+                case 6:
+                    viewBookings();
+                    break;
+                case 7:
+                    cancelBooking();
+                    break;
+                case 8:
+                    System.out.println("Thank you for using the system!");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    // Create: Add a new movie
+    private static void addMovie() {
+        System.out.print("Enter movie title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter genre: ");
+        String genre = scanner.nextLine();
+        System.out.print("Enter duration (minutes): ");
+        int duration = scanner.nextInt();
+        System.out.print("Enter total seats: ");
+        int totalSeats = scanner.nextInt();
+
+        Movie movie = new Movie(nextMovieId++, title, genre, duration, totalSeats);
+        movies.add(movie);
+        System.out.println("Movie added successfully with ID: " + (nextMovieId - 1));
+    }
+
+    // Read: View all movies
+    private static void viewMovies() {
+        if (movies.isEmpty()) {
+            System.out.println("No movies available.");
+            return;
+        }
+        System.out.println("\nAll Movies:");
+        for (Movie m : movies) {
+            System.out.println(m);
+        }
+    }
+
+    // Update: Update available seats for a movie
+    private static void updateMovie() {
+        viewMovies();
+        if (movies.isEmpty()) return;
+
+        System.out.print("Enter movie ID to update: ");
+        int id = scanner.nextInt();
+        Movie movie = findMovieById(id);
+        if (movie == null) {
+            System.out.println("Movie not found.");
+            return;
+        }
+
+        System.out.print("Enter new available seats: ");
+        int newSeats = scanner.nextInt();
+        if (newSeats < 0 || newSeats > movie.getTotalSeats()) {
+            System.out.println("Invalid seats value.");
+            return;
+        }
+        movie.setAvailableSeats(newSeats);
+        System.out.println("Movie updated successfully.");
+    }
+
+    // Delete: Delete a movie
+    private static void deleteMovie() {
+        viewMovies();
+        if (movies.isEmpty()) return;
+
+        System.out.print("Enter movie ID to delete: ");
+        int id = scanner.nextInt();
+        Movie movie = findMovieById(id);
+        if (movie == null) {
+            System.out.println("Movie not found.");
+            return;
+        }
+
+        // Check if there are bookings for this movie
+        boolean hasBookings = false;
+        for (Booking b : bookings) {
+            if (b.getMovieId() == id) {
+                hasBookings = true;
+                break;
+            }
+        }
+        if (hasBookings) {
+            System.out.println("Cannot delete movie with existing bookings.");
+            return;
+        }
+
+        movies.remove(movie);
+        System.out.println("Movie deleted successfully.");
+    }
+
+    // Create: Book a movie (creates a booking and updates seats)
+    private static void bookMovie() {
+        viewMovies();
+        if (movies.isEmpty()) {
+            System.out.println("No movies available.");
+            return;
+        }
+
+        System.out.print("Enter movie ID to book: ");
+        int movieId = scanner.nextInt();
+        Movie movie = findMovieById(movieId);
+        if (movie == null) {
+            System.out.println("Movie not found.");
+            return;
+        }
+
+        if (movie.getAvailableSeats() == 0) {
+            System.out.println("No seats available for this movie.");
+            return;
+        }
+
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter your name: ");
+        String userName = scanner.nextLine();
+        System.out.print("Enter number of seats to book: ");
+        int seats = scanner.nextInt();
+        if (seats > movie.getAvailableSeats() || seats <= 0) {
+            System.out.println("Invalid number of seats.");
+            return;
+        }
+
+        // Update available seats
+        movie.setAvailableSeats(movie.getAvailableSeats() - seats);
+
+        // Create booking
+        String date = "2023-10-" + (new Random().nextInt(30) + 1); // Simple random date
+        Booking booking = new Booking(nextBookingId++, movieId, userName, seats, date);
+        bookings.add(booking);
+        System.out.println("Booking successful! Booking ID: " + (nextBookingId - 1));
+    }
+
+    // Read: View all bookings
+    private static void viewBookings() {
+        if (bookings.isEmpty()) {
+            System.out.println("No bookings yet.");
+            return;
+        }
+        System.out.println("\nAll Bookings:");
+        for (Booking b : bookings) {
+            System.out.println(b);
+        }
+    }
+
+    // Delete: Cancel a booking
+    private static void cancelBooking() {
+        viewBookings();
+        if (bookings.isEmpty()) return;
+
+        System.out.print("Enter booking ID to cancel: ");
+        int id = scanner.nextInt();
+        Booking booking = findBookingById(id);
+        if (booking == null) {
+            System.out.println("Booking not found.");
+            return;
+        }
+
+        // Find movie and restore seats
+        Movie movie = findMovieById(booking.getMovieId());
+        if (movie != null) {
+            movie.setAvailableSeats(movie.getAvailableSeats() + booking.getSeatsBooked());
+        }
+
+        bookings.remove(booking);
+        System.out.println("Booking cancelled successfully. Seats restored.");
+    }
+
+    // Helper method to find movie by ID
+    private static Movie findMovieById(int id) {
+        for (Movie m : movies) {
+            if (m.getId() == id) return m;
+        }
+        return null;
+    }
+
+    // Helper method to find booking by ID
+    private static Booking findBookingById(int id) {
+        for (Booking b : bookings) {
+            if (b.getId() == id) return b;
+        }
+        return null;
+    }
+}
